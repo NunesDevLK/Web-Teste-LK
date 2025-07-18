@@ -1,62 +1,257 @@
-from flask import Flask, render_template_string, request
-
-app = Flask(__name__)
-
-chat_log = []
-
-HTML = """
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>IA do Nunes</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #1e1e1e; color: #fff; padding: 20px; }
-        .chat-box { border: 1px solid #444; border-radius: 10px; padding: 10px; background: #2b2b2b; max-width: 600px; margin: auto; }
-        .msg { margin: 10px 0; }
-        .user { color: #4fc3f7; }
-        .ia { color: #a5d6a7; }
-        form { margin-top: 20px; display: flex; }
-        input[type=text] { flex: 1; padding: 10px; border: none; border-radius: 5px; }
-        button { padding: 10px; border: none; background: #4fc3f7; color: #000; border-radius: 5px; margin-left: 10px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NunesJavaDev - Programador</title>
+  <style>
+    :root {
+      --primary: #00bcd4;
+      --accent: #00e5ff;
+      --bg: #0a0a0a;
+      --text: #ffffff;
+      --muted: #cccccc;
+      --code-bg: #111;
+      --code-color: #00ffcc;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(to right, var(--primary), #2196f3);
+      padding: 3rem 1rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 8vw;
+      margin-bottom: 0.5rem;
+    }
+
+    .bio {
+      font-size: 4.5vw;
+      color: var(--muted);
+    }
+
+    section {
+      padding: 4rem 2rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.5rem;
+    }
+
+    ul {
+      list-style-type: "👉 ";
+      padding-left: 1.5rem;
+    }
+
+    li {
+      margin-bottom: 1.2rem;
+      font-size: 1.2rem;
+    }
+
+    a {
+      color: #80d8ff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .code-block {
+      background-color: var(--code-bg);
+      padding: 1rem;
+      border-radius: 10px;
+      font-family: monospace;
+      color: var(--code-color);
+      font-size: 1.1rem;
+      margin-top: 1rem;
+      position: relative;
+      overflow-x: auto;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #00e5ff;
+      color: #000;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .copy-btn:hover {
+      background: #00bcd4;
+    }
+
+    footer {
+      text-align: center;
+      background-color: #1c1c1c;
+      padding: 2rem;
+      font-size: 1rem;
+      color: #aaa;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+      .bio {
+        font-size: 1.5rem;
+      }
+      h2 {
+        font-size: 1.8rem;
+      }
+      li {
+        font-size: 1rem;
+      }
+      .code-block {
+        font-size: 0.9rem;
+      }
+      section {
+        padding: 2rem 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="chat-box">
-        <h2>IA do Nunes 🤖</h2>
-        {% for msg in chat %}
-            <div class="msg"><strong class="user">Você:</strong> {{ msg['pergunta'] }}</div>
-            <div class="msg"><strong class="ia">IA:</strong> {{ msg['resposta'] }}</div>
-        {% endfor %}
-        <form method="post">
-            <input type="text" name="pergunta" placeholder="Fale com a IA..." autocomplete="off" required>
-            <button type="submit">Enviar</button>
-        </form>
+
+  <header>
+    <h1>NunesJavaDev</h1>
+    <p class="bio">Sou um Programador, o resto é contigo</p>
+  </header>
+
+  <!-- Linguagens -->
+
+  <section>
+    <h2>📘 HTML</h2>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=UB1O30fR-EE" target="_blank">Vídeo: HTML do zero</a></li>
+      <li><a href="https://developer.mozilla.org/pt-BR/docs/Web/HTML" target="_blank">Documentação HTML</a></li>
+    </ul>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+      &lt;!DOCTYPE html&gt;<br>
+      &lt;html&gt;<br>
+      &nbsp;&nbsp;&lt;head&gt;&lt;title&gt;Meu site&lt;/title&gt;&lt;/head&gt;<br>
+      &nbsp;&nbsp;&lt;body&gt;Olá mundo!&lt;/body&gt;<br>
+      &lt;/html&gt;
     </div>
+  </section>
+
+  <section>
+    <h2>🐍 Python</h2>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=S9uPNppGsGo" target="_blank">Curso de Python</a></li>
+      <li><a href="https://www.w3schools.com/python/" target="_blank">W3Schools Python</a></li>
+    </ul>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+      print("Olá, mundo!")<br>
+      nome = input("Qual seu nome? ")<br>
+      print(f"Seja bem-vindo, {nome}!")
+    </div>
+  </section>
+
+  <section>
+    <h2>📜 JavaScript</h2>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=hdI2bqOjy3c" target="_blank">Curso de JavaScript</a></li>
+      <li><a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript" target="_blank">MDN JavaScript</a></li>
+    </ul>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+      alert("Olá mundo!");<br>
+      let nome = prompt("Qual seu nome?");<br>
+      alert("Seja bem-vindo, " + nome + "!");
+    </div>
+  </section>
+
+  <section>
+    <h2>⚙️ Java</h2>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=Ghtqp0Eo-pg" target="_blank">Java para Iniciantes</a></li>
+      <li><a href="https://docs.oracle.com/javase/tutorial/" target="_blank">Documentação Java</a></li>
+    </ul>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+      public class Main {<br>
+      &nbsp;&nbsp;public static void main(String[] args) {<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Olá, mundo!");<br>
+      &nbsp;&nbsp;}<br>
+      }
+    </div>
+  </section>
+
+  <section>
+    <h2>🧠 C++</h2>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=Rub-JsjMhWY" target="_blank">C++ do Zero</a></li>
+      <li><a href="https://cplusplus.com/doc/tutorial/" target="_blank">Tutorial CPlusPlus</a></li>
+    </ul>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+      #include &lt;iostream&gt;<br>
+      using namespace std;<br><br>
+      int main() {<br>
+      &nbsp;&nbsp;cout &lt;&lt; "Olá, mundo!" &lt;&lt; endl;<br>
+      &nbsp;&nbsp;return 0;<br>
+      }
+    </div>
+  </section>
+
+  <section>
+    <h2>🎨 CSS</h2>
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=1PnVor36_40" target="_blank">Curso CSS Flexbox</a></li>
+      <li><a href="https://developer.mozilla.org/pt-BR/docs/Web/CSS" target="_blank">Documentação CSS</a></li>
+    </ul>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+      body {<br>
+      &nbsp;&nbsp;background-color: #000;<br>
+      &nbsp;&nbsp;color: white;<br>
+      &nbsp;&nbsp;font-family: Arial;<br>
+      }
+    </div>
+  </section>
+
+  <footer>
+    Feito com 💻 por NunesJavaDev | Discord: NunesJavaDev
+  </footer>
+
+  <script>
+    function copyCode(button) {
+      const code = button.parentElement.innerText.replace("Copiar", "").trim();
+      navigator.clipboard.writeText(code).then(() => {
+        button.innerText = "Copiado!";
+        setTimeout(() => button.innerText = "Copiar", 1500);
+      });
+    }
+  </script>
+
 </body>
 </html>
-"""
-
-@app.route("/", methods=["GET", "POST"])
-def index():
-    if request.method == "POST":
-        pergunta = request.form["pergunta"]
-        resposta = responder(pergunta)
-        chat_log.append({"pergunta": pergunta, "resposta": resposta})
-    return render_template_string(HTML, chat=chat_log)
-
-def responder(pergunta):
-    pergunta = pergunta.lower()
-    if "oi" in pergunta:
-        return "Olá! Como posso te ajudar hoje?"
-    elif "tudo bem" in pergunta:
-        return "Sim! Estou funcionando a todo vapor 😄"
-    elif "quem é você" in pergunta:
-        return "Sou a IA do Nunes, criada no celular com muito estilo 🚀"
-    elif "adeus" in pergunta:
-        return "Tchau! Foi bom conversar com você 👋"
-    else:
-        return "Desculpa, ainda estou aprendendo. Pode perguntar de outro jeito?"
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
